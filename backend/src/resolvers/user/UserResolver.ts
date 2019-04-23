@@ -20,7 +20,7 @@ export class UserResolver {
     const user = await User.findOne({ where: { email } })
     if (!user)
       throw formatErrors([
-        { path: 'email', message: 'Email is already in use' }
+        { path: 'email', message: 'User with this email is not found' }
       ])
 
     const valid = await bcrypt.compare(password, user.password)
