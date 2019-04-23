@@ -8,6 +8,7 @@ import { Context } from '../../types/Context'
 
 import jwt from 'jsonwebtoken'
 import { LoginInput } from './LoginInput'
+import { formatErrors } from '../../utils/formatErrors'
 
 @Resolver(User)
 export class UserResolver {
@@ -17,11 +18,15 @@ export class UserResolver {
     @Ctx() ctx: Context
   ): Promise<User | null> {
     const user = await User.findOne({ where: { email } })
-    if (!user) return null
+    if (!user)
+      throw formatErrors([
+        { path: 'email', message: 'Email is already in use' }
+      ])
 
     const valid = await bcrypt.compare(password, user.password)
 
-    if (!valid) return null
+    if (!valid)
+      throw formatErrors([{ path: 'password', message: 'Wrong Password' }])
 
     const token = jwt.sign({ userId: user.id }, 'kek')
 
@@ -34,13 +39,11 @@ export class UserResolver {
   async register(@Arg('data')
   {
     email,
-    password,
-    username
+    password
   }: RegisterInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 12)
 
     const user = await User.create({
-      username,
       email,
       password: hashedPassword,
       id: v4()

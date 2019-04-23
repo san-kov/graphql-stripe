@@ -1,5 +1,5 @@
 import { InputType, Field } from 'type-graphql'
-import { IsEmail } from 'class-validator'
+import { IsEmail, Length } from 'class-validator'
 import { UniqueEmail } from './UniqueEmail'
 
 @InputType()
@@ -10,5 +10,6 @@ export class RegisterInput {
   email: string
 
   @Field()
+  @Length(5, 100)
   password: string
 }
