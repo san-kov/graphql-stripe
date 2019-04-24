@@ -1,11 +1,7 @@
 import React from 'react'
 import { Formik, FormikActions, Form, Field } from 'formik'
 import { useMutation } from 'react-apollo-hooks'
-import {
-  SignUpMutation,
-  LogInMutation,
-  GetCurrentUser
-} from '../graphql/userQueries'
+import { LogInMutation, GetCurrentUser } from '../graphql/userQueries'
 import { object, string } from 'yup'
 import { RouteComponentProps } from 'react-router'
 import { formatErrors } from '../formatErrors'
@@ -13,6 +9,7 @@ import {
   LogInMutationData,
   LogInMutationDataVariables
 } from '../generated/LogInMutationData'
+import { WithAuth } from '../HOCs/WithAuth'
 
 interface ILoginFormValues {
   email: string
@@ -35,7 +32,7 @@ const LogIn: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
     { refetchQueries: [{ query: GetCurrentUser }] }
   )
   return (
-    <div>
+    <WithAuth requireAuth={false}>
       <h2>Log In</h2>
       <Formik
         validationSchema={loginSchema}
@@ -47,7 +44,6 @@ const LogIn: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
           setSubmitting(true)
           try {
             await login({ variables: { email, password } })
-            history.push('/profile')
           } catch (error) {
             formatErrors(error, setFieldError)
           } finally {
@@ -70,7 +66,7 @@ const LogIn: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
           </Form>
         )}
       />
-    </div>
+    </WithAuth>
   )
 }
 

@@ -9,6 +9,7 @@ import { SignUpMutation } from '../graphql/userQueries'
 import { object, string } from 'yup'
 import { RouteComponentProps } from 'react-router'
 import { formatErrors } from '../formatErrors'
+import { WithAuth } from '../HOCs/WithAuth'
 
 interface ISignupFormValues {
   email: string
@@ -30,7 +31,7 @@ const SignUp: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
     SignUpMutation
   )
   return (
-    <div>
+    <WithAuth requireAuth={false}>
       <h2>Sign Up</h2>
       <Formik
         validationSchema={signupSchema}
@@ -42,7 +43,6 @@ const SignUp: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
           setSubmitting(true)
           try {
             await signUp({ variables: { email, password } })
-            history.push('/login')
           } catch (error) {
             formatErrors(error, setFieldError)
           } finally {
@@ -65,7 +65,7 @@ const SignUp: React.SFC<RouteComponentProps<{}>> = ({ history }) => {
           </Form>
         )}
       />
-    </div>
+    </WithAuth>
   )
 }
 

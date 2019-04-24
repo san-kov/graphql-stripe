@@ -23,3 +23,8 @@ export const GetCurrentUser = gql`
     }
   }
 `
+export const Logout = gql`
+  mutation LogoutData {
+    logout
+  }
+`

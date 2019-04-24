@@ -60,4 +60,14 @@ export class UserResolver {
     if (!user) return null
     return user
   }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() ctx: Context): Boolean {
+    try {
+      ctx.res.clearCookie('token')
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 }
